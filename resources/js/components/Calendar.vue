@@ -27,7 +27,7 @@
                 >
                     <div
                         v-for="meeting in getMeetings(day.date, hour)"
-                        :key="meeting.summary"
+                        :key="meeting.date + meeting.start + meeting.summary"
                         class="meeting"
                         :style="getMeetingStyle(meeting)"
                     >
