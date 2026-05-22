@@ -26,10 +26,12 @@
                     class="cell"
                 >
                     <div
-                        v-if="getMeetings(day.date, hour)"
+                        v-for="meeting in getMeetings(day.date, hour)"
+                        :key="meeting.summary"
                         class="meeting"
+                        :style="getMeetingStyle(meeting)"
                     >
-                        {{ getMeetings(day.date, hour).summary }}
+                        {{ meeting.summary }}
                     </div>
                 </div>
             </template>
@@ -51,7 +53,6 @@ const workingHours = ref({
     start: '10:00',
     end: '19:00',
 })
-
 const days = ref([])
 
 onMounted(async () => {
@@ -94,7 +95,7 @@ const hours = computed(() => {
 })
 
 const getMeetings = (date, hour) => {
-    return meetings.value.find(meeting => {
+    return meetings.value.filter(meeting => {
         if (meeting.date !== date) {
             return false
         }
@@ -103,6 +104,30 @@ const getMeetings = (date, hour) => {
 
         return meetingStartHour === cellHour
     })
+}
+
+const getMeetingStyle = (meeting) => {
+
+    const startMinutes =
+        Number(meeting.start.split(':')[1])
+
+    const startHour =
+        Number(meeting.start.split(':')[0])
+
+    const endHour =
+        Number(meeting.end.split(':')[0])
+
+    const endMinutes =
+        Number(meeting.end.split(':')[1])
+
+    const duration =
+        ((endHour * 60 + endMinutes)
+        - (startHour * 60 + startMinutes))
+
+    return {
+        top: `${(startMinutes / 60) * 80}px`,
+        height: `${(duration / 60) * 80}px`,
+    }
 }
 
 </script>
@@ -141,10 +166,13 @@ const getMeetings = (date, hour) => {
 
 .meeting {
     position: absolute;
-    inset: 0px;
+    left: 0;
+    right: 0;
     background: #4db6ac;
     color: white;
     padding: 12px;
-    border-radius: 4px;
+    box-sizing: border-box;
+    overflow: hidden;
+    z-index: 1;
 }
 </style>
