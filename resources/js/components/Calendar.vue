@@ -56,25 +56,30 @@ const workingHours = ref({
 const days = ref([])
 
 onMounted(async () => {
-    const response = await axios.get(props.apiUrl)
-    meetings.value = response.data.meetings
-    workingHours.value = response.data.working_hours
-    days.value = [
-        ...new Set(
-            meetings.value.map(meeting => meeting.date)
-        )
-    ].map(date => {
-        const d = new Date(date)
-        const month = d.getMonth() + 1
-        const day = d.getDate()
+    try {
+        const response = await axios.get(props.apiUrl)
+        meetings.value = response.data.meetings
+        workingHours.value = response.data.working_hours
+        days.value = [
+            ...new Set(
+                meetings.value.map(meeting => meeting.date)
+            )
+        ].map(date => {
+            const d = new Date(date)
+            const month = d.getMonth() + 1
+            const day = d.getDate()
 
-        const weekDays = ['日', '月', '火', '水', '木', '金', '土']
+            const weekDays = ['日', '月', '火', '水', '木', '金', '土']
 
-        return {
-            date,
-            label: `${month}/${day}（${weekDays[d.getDay()]}）`
-        }
-    })
+            return {
+                date,
+                label: `${month}/${day}（${weekDays[d.getDay()]}）`
+            }
+        })
+    } catch (error) {
+        console.error('データの取得に失敗しました。',error)
+        alert('ミーティング取得に失敗しました')
+    }
 })
 
 const hours = computed(() => {
