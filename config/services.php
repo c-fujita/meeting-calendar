@@ -35,4 +35,9 @@ return [
         ],
     ],
 
+    'meeting_api' => [
+        'url' => env('MEETING_API_URL'),
+        'user_agent' => env('MEETING_API_USER_AGENT'),
+    ],
+
 ];
